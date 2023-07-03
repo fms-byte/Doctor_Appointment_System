@@ -57,7 +57,7 @@
                 <a href="view_appointments.php" class="font-medium text-gray-800 hover:text-red-500">View Appointments</a>
             </li> -->
             <li class="mr-4">
-                <a href="contact.php" class="font-medium text-gray-800 hover:text-red-500">Contact</a>
+                <a href="admin.php" class="font-medium text-gray-800 hover:text-red-500">Admin</a>
             </li>
             <li class="mr-4">
                 <a href="about.php" class="font-medium text-gray-800 hover:text-red-500">About</a>

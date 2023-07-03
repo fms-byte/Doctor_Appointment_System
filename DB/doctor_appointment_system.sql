@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 03, 2023 at 05:08 PM
+-- Generation Time: Jul 03, 2023 at 06:55 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -33,6 +33,14 @@ CREATE TABLE `admins` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`admin_id`, `name`, `email`, `password`) VALUES
+(1, 'Farhan', 'fsh@gmail.com', '1234'),
+(2, 'admin', 'admin@gmail.com', '1234');
 
 -- --------------------------------------------------------
 
@@ -71,6 +79,7 @@ CREATE TABLE `doctors` (
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `specialization` varchar(255) NOT NULL,
+  `status` enum('pending','approved') DEFAULT 'pending',
   `start` time NOT NULL,
   `end` time NOT NULL,
   `availability` varchar(255) NOT NULL
@@ -80,11 +89,12 @@ CREATE TABLE `doctors` (
 -- Dumping data for table `doctors`
 --
 
-INSERT INTO `doctors` (`doctor_id`, `name`, `email`, `password`, `specialization`, `start`, `end`, `availability`) VALUES
-(5, 'Dr. Baharam', 'baharam@gmail.com', '123', 'Medicine', '15:00:00', '17:00:00', 'Tuesday, Thursday, Friday, Sunday'),
-(6, 'Blank Space', 'abc@gmail.com', '123', 'Medicine', '01:54:00', '03:54:00', 'Monday'),
-(9, 'Dr. Protik', 'protik@gmail.com', '1234', 'Medicine', '16:00:00', '18:00:00', 'Monday, Wednesday, Friday'),
-(10, 'samiha', 'samiha@gmail.com', 'samiha', 'Women', '18:00:00', '20:00:00', 'Monday, Wednesday');
+INSERT INTO `doctors` (`doctor_id`, `name`, `email`, `password`, `specialization`, `status`, `start`, `end`, `availability`) VALUES
+(5, 'Dr. Baharam', 'baharam@gmail.com', '123', 'Medicine', 'approved', '15:00:00', '17:00:00', 'Tuesday, Thursday, Friday, Sunday'),
+(6, 'Blank Space', 'abc@gmail.com', '123', 'Medicine', 'approved', '01:54:00', '03:54:00', 'Monday'),
+(9, 'Dr. Protik', 'protik@gmail.com', '1234', 'Medicine', 'approved', '16:00:00', '18:00:00', 'Monday, Wednesday, Friday'),
+(10, 'samiha', 'samiha@gmail.com', 'samiha', 'Women', 'approved', '18:00:00', '20:00:00', 'Monday, Wednesday'),
+(11, 'shahariar', 'sh@gmail.com', '123', 'Surgery', 'approved', '10:00:00', '16:00:00', 'Monday, Wednesday, Friday, Sunday');
 
 -- --------------------------------------------------------
 
@@ -149,7 +159,7 @@ ALTER TABLE `patients`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `appointments`
@@ -161,7 +171,7 @@ ALTER TABLE `appointments`
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
-  MODIFY `doctor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `doctor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `patients`

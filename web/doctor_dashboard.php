@@ -24,6 +24,11 @@ $doctorQuery = "SELECT * FROM doctors WHERE doctor_id = $doctorId";
 $doctorResult = mysqli_query($conn, $doctorQuery);
 $doctor = mysqli_fetch_assoc($doctorResult);
 
+// Check if the doctor's account is pending
+if ($doctor['status'] == 'pending') {
+    $message = "Your account is pending approval.";
+}
+
 // Prepare and execute the SQL query to retrieve the doctor's appointments with patient's name
 $query = "SELECT a.appointment_id, p.name, a.appointment_date, a.appointment_time, a.status 
           FROM appointments a
@@ -77,7 +82,12 @@ mysqli_close($conn);
             </div>
         </div>
 
-
+        <!-- Show message if doctor's account is pending -->
+        <?php if (isset($message)) : ?>
+            <div class="bg-yellow-200 text-yellow-800 rounded p-4 mb-4">
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Appointments Table -->
         <table class="min-w-full bg-white border border-gray-300">

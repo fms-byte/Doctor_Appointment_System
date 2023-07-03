@@ -24,26 +24,19 @@ $patientQuery = "SELECT * FROM patients WHERE patient_id = $patientId";
 $patientResult = mysqli_query($conn, $patientQuery);
 $patient = mysqli_fetch_assoc($patientResult);
 
-// Prepare and execute the SQL query to retrieve the available doctors
-$doctorsQuery = "SELECT * FROM doctors";
-$doctorsResult = mysqli_query($conn, $doctorsQuery);
-$doctors = mysqli_fetch_all($doctorsResult, MYSQLI_ASSOC);
-
 // Prepare and execute the SQL query to retrieve the patient's appointment history with doctor names
 $appointmentQuery = "SELECT a.*, d.name AS doctor_name FROM appointments a INNER JOIN doctors d ON a.doctor_id = d.doctor_id WHERE a.patient_id = $patientId";
 $appointmentResult = mysqli_query($conn, $appointmentQuery);
 $appointments = mysqli_fetch_all($appointmentResult, MYSQLI_ASSOC);
 
-
-
-// Prepare the base query to retrieve doctors
-$query = "SELECT * FROM doctors";
+// Prepare the base query to retrieve approved doctors
+$query = "SELECT * FROM doctors WHERE status = 'approved'";
 
 // Check if a specialization is provided in the search
 if (isset($_GET['specialization']) && !empty($_GET['specialization'])) {
     $specialization = $_GET['specialization'];
     // Add a WHERE clause to filter by specialization
-    $query .= " WHERE specialization LIKE '%$specialization%'";
+    $query .= " AND specialization LIKE '%$specialization%'";
 }
 
 // Execute the query
@@ -59,6 +52,7 @@ if (isset($_GET['error']) && $_GET['error'] == 1 && isset($_GET['message'])) {
 // Close the database connection
 mysqli_close($conn);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Check if the form is submitted for doctor registration
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['doctor_register'])) {
     // Retrieve form data
     $name = $_POST['name'];
@@ -35,8 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['doctor_register'])) {
     // Close the database connection
     
 }
-
-// Check if the form is submitted for doctor login
 elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['doctor_login'])) {
     // Retrieve form data
     $email = $_POST['email'];
@@ -62,7 +59,7 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['doctor_login'])) {
         $_SESSION["doctor_name"] = $doctor["name"];
 
         // Redirect to the doctor's dashboard or any other page you want
-        header("Location: doctor_dashboard.php");
+        header("Location: index.php");
         exit();
     } else {
         // Doctor not found, login failed
@@ -70,7 +67,6 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['doctor_login'])) {
         exit();
     }
 }
-// Check if the form is submitted
 elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['patient_register'])) {
     // Get the form data
     $name = $_POST['name'];
@@ -121,7 +117,7 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['patient_login'])) 
         $_SESSION["patient_name"] = $patient["name"];
 
         // Redirect to the doctor's dashboard or any other page you want
-        header("Location: patient_dashboard.php");
+        header("Location: index.php");
         exit();
     } else {
         // Doctor not found, login failed

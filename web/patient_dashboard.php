@@ -51,6 +51,10 @@ $result = mysqli_query($conn, $query);
 
 // Fetch the doctors as an associative array
 $doctors = mysqli_fetch_all($result, MYSQLI_ASSOC);
+if (isset($_GET['error']) && $_GET['error'] == 1 && isset($_GET['message'])) {
+    $errorMessage = $_GET['message'];
+    echo '<script>alert("' . $errorMessage . '");</script>';
+}
 
 // Close the database connection
 mysqli_close($conn);
@@ -94,26 +98,31 @@ mysqli_close($conn);
 
 
             <p><strong>Appointment History:</strong></p>
-            <table class="w-3/5 mx-auto bg-white border border-gray-300">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="px-4 py-2 border-b">Doctor</th>
-                        <th class="px-4 py-2 border-b">Date</th>
-                        <th class="px-4 py-2 border-b">Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($appointments as $appointment) {
-                        echo '<tr>';
-                        echo '<td class="px-4 py-2 border-b text-center">' . $appointment['doctor_name'] . '</td>';
-                        echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_date'] . '</td>';
-                        echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_time'] . '</td>';
-                        echo '</tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
+            <?php if (empty($appointments)) { ?>
+                <p>No history found.</p>
+            <?php } else { ?>
+                <table class="w-3/5 mx-auto bg-white border border-gray-300">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="px-4 py-2 border-b">Doctor</th>
+                            <th class="px-4 py-2 border-b">Date</th>
+                            <th class="px-4 py-2 border-b">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($appointments as $appointment) {
+                            echo '<tr>';
+                            echo '<td class="px-4 py-2 border-b text-center">' . $appointment['doctor_name'] . '</td>';
+                            echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_date'] . '</td>';
+                            echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_time'] . '</td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+
         </div>
 
         <div class="mx-auto bg-white bg-opacity-90 p-4 border border-gray-300 rounded shadow-md mt-8">
@@ -146,11 +155,12 @@ mysqli_close($conn);
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['availability'] . '</td>';
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['start'] . ' - ' . $doctor['end'] . '</td>';
                         echo '<td class="px-4 py-2 border-b text-center">
-                                <form action="make_appointment.php" method="POST">
-                                    <input type="hidden" name="doctor_id" value="' . $doctor['doctor_id'] . '">
+                            <form action="make_appointment.php?doctor_id=' . $doctor['doctor_id'] . '" method="POST">
+                                <div class="flex items-center justify-center">
                                     <button type="submit" name="make_appointment" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Make Appointment</button>
-                                </form>
-                              </td>';
+                                </div>
+                            </form>
+                            </td>';
                         echo '</tr>';
                     }
                     ?>

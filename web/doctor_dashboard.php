@@ -67,7 +67,8 @@ mysqli_close($conn);
         <div class="w-full mx-auto mb-8">
             <div class="bg-white shadow-md rounded p-4 flex flex-col items-center justify-center lg:flex-row lg:items-center">
                 <div class="w-1/5 text-center">
-                    <img src="path_to_doctor_image" alt="Doctor's Image" class="w-16 h-16 rounded-full mr-4">
+                    <img src="<?php echo isset($doctor['profile_picture']) ? $doctor['profile_picture'] : 'default-profile-picture.jpg'; ?>" alt="Doctor's Image" class="w-16 h-16 rounded-full mr-4">
+
                 </div>
                 <div class="w-3/5">
                     <h2 class="text-2xl font-bold mb-2"><?php echo $doctor['name']; ?></h2>
@@ -77,7 +78,7 @@ mysqli_close($conn);
                     <p><strong>Working Hours:</strong> <?php echo $doctor['start']; ?> - <?php echo $doctor['end']; ?></p>
                 </div>
                 <div class="w-1/5 lg:ml-4 text-right">
-                    <a href="edit_doctor.php" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600">Edit Profile</a>
+                    <a href="edit_profile.php" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600">Edit Profile</a>
                 </div>
             </div>
         </div>

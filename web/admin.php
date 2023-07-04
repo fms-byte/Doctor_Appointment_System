@@ -7,10 +7,8 @@ if (!isset($_SESSION["admin_id"])) {
     header("Location: admin_login.php");
     exit();
 }
-
 // Get the admin's ID from the session
- $adminId = $_SESSION["admin_id"];
-
+$adminId = $_SESSION["admin_id"];
 
 // Connect to the database (replace DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME with your actual database credentials)
 $conn = mysqli_connect("localhost", "root", "", "doctor_appointment_system");
@@ -44,6 +42,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             // Failed to update status
             echo "Failed to update status.";
+        }
+    } elseif (isset($_POST["delete_doctor_id"])) {
+        $doctorId = $_POST["delete_doctor_id"];
+
+        // Prepare and execute the SQL query to delete the doctor from the database
+        $deleteQuery = "DELETE FROM doctors WHERE doctor_id = $doctorId";
+        $deleteResult = mysqli_query($conn, $deleteQuery);
+
+        if ($deleteResult) {
+            // Doctor deleted successfully
+            echo "Doctor deleted successfully.";
+        } else {
+            // Failed to delete doctor
+            echo "Failed to delete doctor.";
+        }
+    } elseif (isset($_POST["delete_patient_id"])) {
+        $patientId = $_POST["delete_patient_id"];
+
+        // Prepare and execute the SQL query to delete the patient from the database
+        $deleteQuery = "DELETE FROM patients WHERE patient_id = $patientId";
+        $deleteResult = mysqli_query($conn, $deleteQuery);
+
+        if ($deleteResult) {
+            // Patient deleted successfully
+            echo "Patient deleted successfully.";
+        } else {
+            // Failed to delete patient
+            echo "Failed to delete patient.";
         }
     }
 }
@@ -93,16 +119,26 @@ mysqli_close($conn);
     <!-- Sidebar -->
     <aside class="bg-gray-800 text-white h-screen w-64 fixed">
         <div class="p-6">
-            <h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
-            <ul class="space-y-2">
+            <a href="admin.php" class="text-2xl font-bold mb-4">Admin Panel</a>
+            <ul class="space-y-2 mt-4 ">
                 <li>
-                    <a href="#" class="block py-2 px-4 rounded-md hover:bg-gray-700">Dashboard</a>
+                    <a href="#dashboard" class="block py-2 px-4 rounded-md hover:bg-gray-700">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#" class="block py-2 px-4 rounded-md hover:bg-gray-700">Settings</a>
+                    <a href="#doctors-list" class="block py-2 px-4 rounded-md hover:bg-gray-700">Doctors</a>
                 </li>
                 <li>
-                    <a href="#" class="block py-2 px-4 rounded-md hover:bg-gray-700">Logout</a>
+                    <a href="#patients-list" class="block py-2 px-4 rounded-md hover:bg-gray-700">Patients</a>
+                </li>
+                <li>
+                    <?php if ($admin['role'] === 'superadmin') : ?>
+                        <div class="rounded mt-4">
+                            <a href="register_admin.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Add Admin</a>
+                        </div>
+                    <?php endif; ?>
+                </li>
+                <li>
+                    <a href="admin_logout.php" class="block py-2 px-4 rounded-md hover:bg-gray-700">Logout</a>
                 </li>
             </ul>
         </div>
@@ -110,39 +146,23 @@ mysqli_close($conn);
 
     <!-- Main Content -->
     <main class="ml-64 p-6">
-        <h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+        <h1 class="text-2xl font-bold mb-4" id="dashboard">Dashboard</h1>
 
         <!-- Admin's Information -->
-        <div class="bg-white shadow-md rounded p-4 flex flex-col items-center justify-center">
-            <h2 class="text-2xl font-bold mb-2"><?php echo $admin['name']; ?></h2>
-            <p><strong>Email:</strong> <?php echo $admin['email']; ?></p>
-        </div>
-
-        <!-- Patients Table -->
         <div class="bg-white shadow-md rounded p-4 mt-4">
-            <h2 class="text-xl font-bold mb-4">Patients List</h2>
-            <table class="min-w-full bg-white border border-gray-300 text-center">
-                <thead>
-                    <tr>
-                        <th class="py-2 px-4 border-b">ID</th>
-                        <th class="py-2 px-4 border-b">Name</th>
-                        <th class="py-2 px-4 border-b">Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($patients as $patient) : ?>
-                        <tr>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['patient_id']; ?></td>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['name']; ?></td>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['email']; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
+            <p><strong>Name:</strong> <?php echo $admin['name']; ?></p>
+            <p><strong>Email:</strong> <?php echo $admin['email']; ?></p>
+            <p><strong>Role:</strong> <?php echo $admin['role']; ?></p>
+            <?php if ($admin['role'] === 'superadmin') : ?>
+                <p>You are eligible to add admin.</p>
+            <?php else : ?>
+                <p>You are not eligible to add admin.</p>
+            <?php endif; ?>
         </div>
 
         <!-- Doctors Table -->
-        <div class="bg-white shadow-md rounded p-4 mt-4">
+        <div class="bg-white shadow-md rounded p-4 mt-4" id="doctors-list">
             <h2 class="text-xl font-bold mb-4">Doctors List</h2>
             <table class="min-w-full bg-white border border-gray-300">
                 <thead>
@@ -152,7 +172,8 @@ mysqli_close($conn);
                         <th class="px-4 py-2 border-b">Specialization</th>
                         <th class="px-4 py-2 border-b">Email</th>
                         <th class="px-4 py-2 border-b">Availability</th>
-                        <th class="px-4 py-2 border-b">Status<p class="text-sm">(pending/approved)</p></th>
+                        <th class="px-4 py-2 border-b">Status<p class="text-sm">(pending/approved)</p>
+                        </th>
                         <th class="px-4 py-2 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -169,14 +190,46 @@ mysqli_close($conn);
                                 <button onclick="toggleStatusEdit(this)" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded">
                                     Edit
                                 </button>
+                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this doctor?');">
+                                    <input type="hidden" name="delete_doctor_id" value="<?php echo $doctor['doctor_id']; ?>">
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 mt-1 rounded">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
         </div>
 
+        <!-- Patients Table -->
+        <div class="bg-white shadow-md rounded p-4 mt-4" id="patients-list">
+            <h2 class="text-xl font-bold mb-4">Patients List</h2>
+            <table class="min-w-full bg-white border border-gray-300 text-center">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">ID</th>
+                        <th class="py-2 px-4 border-b">Name</th>
+                        <th class="py-2 px-4 border-b">Email</th>
+                        <th class="py-2 px-4 border-b">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($patients as $patient) : ?>
+                        <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['patient_id']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['name']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['email']; ?></td>
+                            <td class="py-2 px-4 border-b">
+                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this patient?');">
+                                    <input type="hidden" name="delete_patient_id" value="<?php echo $patient['patient_id']; ?>">
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </main>
 
     <script>
@@ -199,47 +252,42 @@ mysqli_close($conn);
                             statusElement.classList.add('editable');
                             inputElement.parentNode.removeChild(inputElement);
                             element.textContent = 'Edit';
-                            // Redirect to admin.php after status update
-                            window.location.href = 'admin.php';
                         })
-                        .catch((error) => {
-                            console.error(error);
+                        .catch(() => {
+                            alert('Status Updating...');
                         });
                 });
 
                 statusElement.textContent = '';
-                statusElement.appendChild(inputElement);
                 statusElement.classList.remove('editable');
-                element.textContent = 'Save';
+                statusElement.appendChild(inputElement);
                 inputElement.focus();
-            } else {
-                element.textContent = 'Edit';
-                statusElement.classList.add('editable');
-                statusElement.textContent = currentStatus;
+                element.textContent = 'Save';
             }
         }
 
         function updateStatus(doctorId, newStatus) {
             return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
-                xhr.open('POST', 'update_status.php', true);
+                xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        resolve();
-                    } else {
-                        reject(new Error('Failed to update status'));
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            resolve();
+                        } else {
+                            reject();
+                        }
                     }
                 };
-                xhr.onerror = function() {
-                    reject(new Error('Failed to make the request'));
-                };
-                xhr.send('doctorId=' + doctorId + '&newStatus=' + newStatus);
-                window.location.href = 'admin.php';
+
+                const data = `doctor_id=${doctorId}&status=${newStatus}`;
+                xhr.send(data);
+                //redirect to admin.php
+                window.location.href = "admin.php";
             });
         }
     </script>
-
 </body>
 
 </html>

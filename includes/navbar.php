@@ -56,9 +56,11 @@
             <li class="mr-4">
                 <a href="view_appointments.php" class="font-medium text-gray-800 hover:text-red-500">View Appointments</a>
             </li> -->
+            <?php if (!isset($doctor) && !isset($patient)) { ?>
             <li class="mr-4">
                 <a href="admin.php" class="font-medium text-gray-800 hover:text-red-500">Admin</a>
             </li>
+            <?php } ?>
             <li class="mr-4">
                 <a href="about.php" class="font-medium text-gray-800 hover:text-red-500">About</a>
             </li>

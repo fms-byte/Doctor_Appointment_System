@@ -127,7 +127,6 @@ session_start();
         }
         ?>
     </main>
-
     <!-- footer start -->
     <?php include '../includes/footer.php'; ?>
     <!-- footer end -->

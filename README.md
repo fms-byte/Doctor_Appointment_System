@@ -40,7 +40,7 @@ The Doctor Appointment System is a web-based application that allows patients to
 
 Contributions to the Doctor Appointment System are welcome! If you find any issues or want to add new features, please feel free to submit a pull request.
 
-## License
+## Copyright
 
 This project is licensed under the [MIT License](LICENSE).
 

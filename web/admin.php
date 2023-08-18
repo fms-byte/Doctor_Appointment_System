@@ -88,6 +88,23 @@ $resultDoctors = mysqli_query($conn, $queryDoctors);
 // Fetch the list of doctors as an associative array
 $doctors = mysqli_fetch_all($resultDoctors, MYSQLI_ASSOC);
 
+// Prepare and execute the SQL query to retrieve the doctor's appointments with patient's name
+$queryAppointment = "SELECT a.appointment_id, p.name AS pname, p.phone,d.name AS dname, a.appointment_date, a.appointment_time, a.status 
+          FROM appointments a
+          JOIN patients p ON a.patient_id = p.patient_id
+          JOIN doctors d ON a.doctor_id = d.doctor_id";
+$resultAppointment = mysqli_query($conn, $queryAppointment);
+
+// Fetch the appointments as an associative array
+$appointments = mysqli_fetch_all($resultAppointment, MYSQLI_ASSOC);
+
+// Prepare and execute the SQL query to retrieve the list of admins
+$queryAdmin = "SELECT * FROM admins";
+$resultAdmin = mysqli_query($conn, $queryAdmin);
+
+// Fetch the list of doctors as an associative array
+$admins = mysqli_fetch_all($resultAdmin, MYSQLI_ASSOC);
+
 // Close the database connection
 mysqli_close($conn);
 ?>
@@ -131,6 +148,9 @@ mysqli_close($conn);
                     <a href="#patients-list" class="block py-2 px-4 rounded-md hover:bg-gray-700">Patients</a>
                 </li>
                 <li>
+                    <a href="#appointments-list" class="block py-2 px-4 rounded-md hover:bg-gray-700">Appointments</a>
+                </li>
+                <li>
                     <?php if ($admin['role'] === 'superadmin') : ?>
                         <div class="rounded mt-4">
                             <a href="register_admin.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Add Admin</a>
@@ -146,20 +166,51 @@ mysqli_close($conn);
 
     <!-- Main Content -->
     <main class="ml-64 p-6">
-        <h1 class="text-2xl font-bold mb-4" id="dashboard">Dashboard</h1>
+        <!-- <h1 class="text-2xl font-bold mb-4" id="dashboard">Dashboard</h1> -->
 
         <!-- Admin's Information -->
-        <div class="bg-white shadow-md rounded p-4 mt-4">
+        <div class="bg-white shadow-md rounded p-4 mt-4" id="dashboard">
             <h2 class="text-2xl font-bold mb-4">Dashboard</h2>
             <p><strong>Name:</strong> <?php echo $admin['name']; ?></p>
             <p><strong>Email:</strong> <?php echo $admin['email']; ?></p>
             <p><strong>Role:</strong> <?php echo $admin['role']; ?></p>
-            <?php if ($admin['role'] === 'superadmin') : ?>
-                <p>You are eligible to add admin.</p>
-            <?php else : ?>
-                <p>You are not eligible to add admin.</p>
-            <?php endif; ?>
+            <p class="py-2 px-4 <?php echo ($admin['role'] === 'superadmin') ? 'bg-green-300' : 'bg-red-300'; ?> text-black text-center font-bold rounded">
+                <?php echo ($admin['role'] === 'superadmin') ? 'You are eligible to add admin.' : 'You are not eligible to add admin.'; ?>
+            </p>
         </div>
+
+        <!-- admin's list -->
+        <div class="bg-white shadow-md rounded p-4 mt-4" id="admins-list">
+            <h2 class="text-xl font-bold mb-4">Admins List</h2>
+            <table class="min-w-full bg-white border border-gray-300 text-center">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">Name</th>
+                        <th class="py-2 px-4 border-b">Email</th>
+                        <th class="py-2 px-4 border-b">Role</th>
+                        <th class="py-2 px-4 border-b">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($admins as $admin) : ?>
+                        <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $admin['name']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $admin['email']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $admin['role']; ?></td>
+                            <td class="py-2 px-4 border-b">
+                                <?php if ($admin['role'] === 'admin') : ?>
+                                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this admin?');">
+                                        <input type="hidden" name="delete_admin_id" value="<?php echo $admin['admin_id']; ?>">
+                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
 
         <!-- Doctors Table -->
         <div class="bg-white shadow-md rounded p-4 mt-4" id="doctors-list">
@@ -167,11 +218,12 @@ mysqli_close($conn);
             <table class="min-w-full bg-white border border-gray-300">
                 <thead>
                     <tr>
-                        <th class="px-4 py-2 border-b">Doctor ID</th>
                         <th class="px-4 py-2 border-b">Name</th>
                         <th class="px-4 py-2 border-b">Specialization</th>
                         <th class="px-4 py-2 border-b">Email</th>
+                        <th class="px-4 py-2 border-b">Contact</th>
                         <th class="px-4 py-2 border-b">Availability</th>
+                        <th class="px-4 py-2 border-b">Working Hours</th>
                         <th class="px-4 py-2 border-b">Status<p class="text-sm">(pending/approved)</p>
                         </th>
                         <th class="px-4 py-2 border-b">Actions</th>
@@ -180,11 +232,12 @@ mysqli_close($conn);
                 <tbody>
                     <?php foreach ($doctors as $doctor) : ?>
                         <tr>
-                            <td class="px-4 py-2 border-b text-center doctor-id"><?php echo $doctor['doctor_id']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['name']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['specialization']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['email']; ?></td>
+                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['phone']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['availability']; ?></td>
+                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['start'] . '-' . $doctor['end']; ?></td>
                             <td class="px-4 py-2 border-b text-center status editable"><?php echo $doctor['status']; ?></td>
                             <td class="px-4 py-2 border-b text-center">
                                 <button onclick="toggleStatusEdit(this)" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded">
@@ -207,18 +260,20 @@ mysqli_close($conn);
             <table class="min-w-full bg-white border border-gray-300 text-center">
                 <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b">ID</th>
                         <th class="py-2 px-4 border-b">Name</th>
                         <th class="py-2 px-4 border-b">Email</th>
+                        <th class="py-2 px-4 border-b">Contact</th>
+                        <th class="py-2 px-4 border-b">Age</th>
                         <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($patients as $patient) : ?>
                         <tr>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['patient_id']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['name']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['email']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['phone']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['age']; ?></td>
                             <td class="py-2 px-4 border-b">
                                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this patient?');">
                                     <input type="hidden" name="delete_patient_id" value="<?php echo $patient['patient_id']; ?>">
@@ -230,6 +285,38 @@ mysqli_close($conn);
                 </tbody>
             </table>
         </div>
+
+        <!-- appointment's table -->
+        <div class="bg-white shadow-md rounded p-4 mt-4" id="appointments-list">
+            <h2 class="text-xl font-bold mb-4">Appointments List</h2>
+            <table class="min-w-full bg-white border border-gray-300 text-center">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b">Appointment ID</th>
+                        <th class="py-2 px-4 border-b">Patient Name</th>
+                        <th class="py-2 px-4 border-b">Contact</th>
+                        <th class="py-2 px-4 border-b">Doctor Name</th>
+                        <th class="py-2 px-4 border-b">Date</th>
+                        <th class="py-2 px-4 border-b">Time</th>
+                        <th class="py-2 px-4 border-b">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($appointments as $appointment) : ?>
+                        <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['appointment_id']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['pname']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['phone']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['dname']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['appointment_date']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['appointment_time']; ?></td>
+                            <td class="py-2 px-4 border-b"><?php echo $appointment['status']; ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
     </main>
 
     <script>

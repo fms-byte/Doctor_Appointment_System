@@ -22,15 +22,27 @@ if (mysqli_connect_errno()) {
 // Prepare and execute the SQL query to retrieve the doctor's information
 $doctorQuery = "SELECT * FROM doctors WHERE doctor_id = $doctorId";
 $doctorResult = mysqli_query($conn, $doctorQuery);
-$doctor = mysqli_fetch_assoc($doctorResult);
+if (!$doctorResult || mysqli_num_rows($doctorResult) === 0) {
+    // Doctor record not found
+    echo '<script>alert("Your account is no longer active. Please contact admin for more information. Redirecting to home page...");</script>';
+    // Wait for 2 seconds (in milliseconds)
+    echo '<meta http-equiv="refresh" content="2;url=index.php">';
+    // Destroy the session
+    session_destroy();
+    exit();
+} else {
+    $doctor = mysqli_fetch_assoc($doctorResult);
 
-// Check if the doctor's account is pending
-if ($doctor['status'] == 'pending') {
-    $message = "Your account is pending approval.";
+    // Check if the doctor's account is pending
+    if ($doctor['status'] == 'pending') {
+        $message = "Your account is pending approval. Patient services will resume after verification. Please wait for verification or contact admin after 24 hours. Thank you for your patience.";
+    }
 }
 
+
+
 // Prepare and execute the SQL query to retrieve the doctor's appointments with patient's name
-$query = "SELECT a.appointment_id, p.name, a.appointment_date, a.appointment_time, a.status 
+$query = "SELECT a.appointment_id, p.name, p.phone, a.appointment_date, a.appointment_time, a.status 
           FROM appointments a
           JOIN patients p ON a.patient_id = p.patient_id
           WHERE a.doctor_id = $doctorId";
@@ -67,38 +79,41 @@ mysqli_close($conn);
         <div class="w-full mx-auto mb-8">
             <div class="bg-white shadow-md rounded p-4 flex flex-col items-center justify-center lg:flex-row lg:items-center">
                 <div class="w-1/5 text-center">
-                    <img src="<?php echo isset($doctor['profile_picture']) ? $doctor['profile_picture'] : 'default-profile-picture.jpg'; ?>" alt="Doctor's Image" class="w-16 h-16 rounded-full mr-4">
+                    <img src="<?php echo isset($doctor['profile_picture']) ? $doctor['profile_picture'] : '../img/doctor.png'; ?>" alt="Doctor's Image" class="w-48 h-48 rounded-full mr-4">
 
                 </div>
                 <div class="w-3/5">
                     <h2 class="text-2xl font-bold mb-2"><?php echo $doctor['name']; ?></h2>
-                    <p><strong>Speciality:</strong> <?php echo $doctor['specialization']; ?></p>
-                    <p><strong>Email:</strong> <?php echo $doctor['email']; ?></p>
-                    <p><strong>Availability:</strong> <?php echo $doctor['availability']; ?></p>
-                    <p><strong>Working Hours:</strong> <?php echo $doctor['start']; ?> - <?php echo $doctor['end']; ?></p>
+                    <p>Speciality:<strong>&nbsp <?php echo $doctor['specialization']; ?></strong></p>
+                    <p>Email:<strong> &nbsp<?php echo $doctor['email']; ?></strong></p>
+                    <p>Contact:<strong> &nbsp<?php echo $doctor['phone']; ?></strong></p>
+                    <p>Availability:<strong>&nbsp <?php echo $doctor['availability']; ?></strong></p>
+                    <p>Working Hours:<strong> &nbsp<?php echo $doctor['start']; ?> - <?php echo $doctor['end']; ?></strong></p>
+                    <p>Registration Number:<strong> &nbsp<?php echo $doctor['reg_num']; ?></strong></p>
                 </div>
                 <div class="w-1/5 lg:ml-4 text-right">
-                    <a href="edit_profile.php" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600">Edit Profile</a>
+                    <a href="edit_profile.php" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-600">Update Profile</a>
                 </div>
             </div>
         </div>
 
         <!-- Show message if doctor's account is pending -->
         <?php if (isset($message)) : ?>
-            <div class="bg-yellow-200 text-yellow-800 rounded p-4 mb-4">
+            <div class="bg-yellow-300 text-yellow-900 rounded p-4 mb-4">
                 <?php echo $message; ?>
             </div>
         <?php endif; ?>
 
         <!-- Appointments Table -->
         <table class="min-w-full bg-white border border-gray-300">
-            <thead>
+            <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-4 py-2 border-b">Appointment ID</th>
-                    <th class="px-4 py-2 border-b">Patient Name</th>
-                    <th class="px-4 py-2 border-b">Date</th>
-                    <th class="px-4 py-2 border-b">Time</th>
-                    <th class="px-4 py-2 border-b">Status</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Appointment ID</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Patient Name</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Contact</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Date</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Time</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Status</th>
                 </tr>
             </thead>
             <tbody>
@@ -106,6 +121,7 @@ mysqli_close($conn);
                     <tr>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['appointment_id']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['name']; ?></td>
+                        <td class="px-4 py-2 border-b text-center"><?php echo $appointment['phone']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['appointment_date']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['appointment_time']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['status']; ?></td>

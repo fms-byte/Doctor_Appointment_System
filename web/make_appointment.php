@@ -152,11 +152,15 @@ if (isset($_POST["doctor_id"])) {
                         <input type="text" id="availability" name="availability" value="<?php echo $doctor['availability']; ?>" readonly class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="flex flex-col mb-4">
+                        <label for="start" class="text-lg font-medium mb-2">Available Time</label>
+                        <input type="text" id="start" name="start" value="<?php echo $doctor['start'] . '-' . $doctor['end']; ?>" readonly class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="flex flex-col mb-4">
                         <label for="appointment_date" class="text-lg font-medium mb-2">Appointment Date</label>
                         <input type="date" id="appointment_date" name="appointment_date" required class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="flex flex-col mb-4">
-                        <label for="appointment_time" class="text-lg font-medium mb-2">Appointment Time</label>
+                        <label for="appointment_time" class="text-lg font-medium mb-2">Appointment Time </label>
                         <input type="time" id="appointment_time" name="appointment_time" required class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <!-- Add other input fields for appointment details here -->

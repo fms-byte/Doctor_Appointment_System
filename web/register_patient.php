@@ -41,8 +41,21 @@
                     <input type="email" name="email" id="email" class="w-full py-1 pl-2 border-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
                 <div class="mb-4">
+                    <label for="age" class="block text-gray-700">Age</label>
+                    <input type="number" name="age" id="age" min="1" max="100" class="w-full py-1 pl-2 border-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="block text-gray-700">Phone</label>
+                    <input type="tel" name="phone" id="phone" class="w-full py-1 pl-2 border-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="+880" required>
+                </div>
+                <div class="mb-4">
                     <label for="password" class="block text-gray-700">Password</label>
                     <input type="password" name="password" id="password" class="w-full py-1 pl-2 border-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <!-- confirm password -->
+                <div class="mb-4">
+                    <label for="confirm_password" class="block text-gray-700">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="w-full py-1 pl-2 border-2 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
                 <div class="flex justify-center">
                     <button type="submit" name="patient_register" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">Register</button>

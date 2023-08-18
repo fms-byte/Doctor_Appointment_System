@@ -43,3 +43,8 @@ Contributions to the Doctor Appointment System are welcome! If you find any issu
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+//Git command to push and pull to github
+git add .
+git commit -m "message"
+git push origin main

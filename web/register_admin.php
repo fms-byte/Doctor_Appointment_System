@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if ($insertResult) {
             // Admin registration successful
-            $_SESSION["admin_id"] = mysqli_insert_id($conn);
+            //$_SESSION["admin_id"] = mysqli_insert_id($conn);
             header("Location: admin.php");
             exit();
         } else {

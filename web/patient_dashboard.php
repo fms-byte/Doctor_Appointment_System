@@ -25,7 +25,7 @@ $patientResult = mysqli_query($conn, $patientQuery);
 $patient = mysqli_fetch_assoc($patientResult);
 
 // Prepare and execute the SQL query to retrieve the patient's appointment history with doctor names
-$appointmentQuery = "SELECT a.*, d.name AS doctor_name FROM appointments a INNER JOIN doctors d ON a.doctor_id = d.doctor_id WHERE a.patient_id = $patientId";
+$appointmentQuery = "SELECT a.*, d.name AS doctor_name, d.phone AS doctor_phone, d.reg_num AS doctor_reg_num FROM appointments a INNER JOIN doctors d ON a.doctor_id = d.doctor_id WHERE a.patient_id = $patientId";
 $appointmentResult = mysqli_query($conn, $appointmentQuery);
 $appointments = mysqli_fetch_all($appointmentResult, MYSQLI_ASSOC);
 
@@ -84,21 +84,27 @@ mysqli_close($conn);
     <div class="container mx-auto py-8 mb-8 mt-20">
         <div class="mx-auto bg-white bg-opacity-90 p-4 border border-gray-300 rounded shadow-md">
             <h2 class="text-2xl font-bold mb-2">Patient Information</h2>
-            <div class="w-full mx-auto bg-white flex  justify-center mb-4">
-                <div class="w-1/2 text-center"><strong>Name:</strong> <?php echo $patient['name']; ?></div>
-                <div class="w-1/2"><strong>Email:</strong> <?php echo $patient['email']; ?></div>
+            <div class="w-full mx-auto bg-blue-200 flex justify-center p-4 mb-4 text-xl">
+                <div class="w-1/4 text-center flex items-center justify-center"><strong>Name:</strong>&nbsp;<?php echo $patient['name']; ?></div>
+                <div class="w-1/4 flex items-center justify-center"><strong>Email:</strong>&nbsp;<?php echo $patient['email']; ?></div>
+                <div class="w-1/4 flex items-center justify-center"><strong>Contact Number:</strong>&nbsp;<?php echo $patient['phone']; ?></div>
+                <div class="w-1/4 flex items-center justify-center"><strong>Age:</strong>&nbsp;<?php echo $patient['age']; ?></div>
             </div>
-
 
 
             <p><strong>Appointment History:</strong></p>
             <?php if (empty($appointments)) { ?>
+                <div class="flex justify-center items-center h-48">
                 <p>No history found.</p>
+                </div>
+                
             <?php } else { ?>
-                <table class="w-3/5 mx-auto bg-white border border-gray-300">
+                <table class="w-3/4 mx-auto bg-white border border-gray-300 mt-4">
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="px-4 py-2 border-b">Doctor</th>
+                            <th class="px-4 py-2 border-b">Contact</th>
+                            <th class="px-4 py-2 border-b">Registration No.</th>
                             <th class="px-4 py-2 border-b">Date</th>
                             <th class="px-4 py-2 border-b">Time</th>
                         </tr>
@@ -108,6 +114,8 @@ mysqli_close($conn);
                         foreach ($appointments as $appointment) {
                             echo '<tr>';
                             echo '<td class="px-4 py-2 border-b text-center">' . $appointment['doctor_name'] . '</td>';
+                            echo '<td class="px-4 py-2 border-b text-center">' . $appointment['doctor_phone'] . '</td>';
+                            echo '<td class="px-4 py-2 border-b text-center">' . $appointment['doctor_reg_num'] . '</td>';
                             echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_date'] . '</td>';
                             echo '<td class="px-4 py-2 border-b text-center">' . $appointment['appointment_time'] . '</td>';
                             echo '</tr>';
@@ -133,8 +141,9 @@ mysqli_close($conn);
                     <tr>
                         <th class="px-4 py-2 border-b">Doctor Name</th>
                         <th class="px-4 py-2 border-b">Specialization</th>
-                        <th class="px-4 py-2 border-b">Email</th>
-                        <th class="px-4 py-2 border-b">Availability</th>
+                        <th class="px-4 py-2 border-b">Contact</th>
+                        <th class="px-4 py-2 border-b">Consultant Fee</th>
+                        <th class="px-4 py-2 border-b">Working Days</th>
                         <th class="px-4 py-2 border-b">Working Hours</th>
                         <th class="px-4 py-2 border-b">Actions</th>
                     </tr>
@@ -145,13 +154,14 @@ mysqli_close($conn);
                         echo '<tr>';
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['name'] . '</td>';
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['specialization'] . '</td>';
-                        echo '<td class="px-4 py-2 border-b text-center">' . $doctor['email'] . '</td>';
+                        echo '<td class="px-4 py-2 border-b text-center">' . $doctor['phone'] . '</td>';
+                        echo '<td class="px-4 py-2 border-b text-center">' . $doctor['fee'] . ' tk</td>';
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['availability'] . '</td>';
                         echo '<td class="px-4 py-2 border-b text-center">' . $doctor['start'] . ' - ' . $doctor['end'] . '</td>';
                         echo '<td class="px-4 py-2 border-b text-center">
                             <form action="make_appointment.php?doctor_id=' . $doctor['doctor_id'] . '" method="POST">
                                 <div class="flex items-center justify-center">
-                                    <button type="submit" name="make_appointment" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Make Appointment</button>
+                                    <button type="submit" name="make_appointment" class="bg-blue-500 text-white p-1 rounded-md hover:bg-blue-600">Make Appointment</button>
                                 </div>
                             </form>
                             </td>';

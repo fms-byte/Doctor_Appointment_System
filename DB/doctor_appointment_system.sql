@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 04, 2023 at 11:58 AM
+-- Generation Time: Aug 19, 2023 at 09:28 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -40,8 +40,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `name`, `email`, `password`, `role`) VALUES
-(1, 'admin', 'admin@gmail.com', '1234', 'superadmin'),
-(3, 'Farhan', 'farhan@gmail.com', 'farhan', 'admin');
+(1, 'admin', 'admin@gmail.com', 'admin', 'superadmin');
 
 -- --------------------------------------------------------
 
@@ -58,16 +57,6 @@ CREATE TABLE `appointments` (
   `status` enum('confirmed','canceled','completed') DEFAULT 'confirmed'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `appointments`
---
-
-INSERT INTO `appointments` (`appointment_id`, `patient_id`, `doctor_id`, `appointment_date`, `appointment_time`, `status`) VALUES
-(37, 3, 5, '2023-07-03', '15:00:00', 'confirmed'),
-(38, 3, 5, '2023-07-04', '15:00:00', 'confirmed'),
-(39, 3, 5, '2023-07-06', '15:00:00', 'confirmed'),
-(40, 3, 5, '2023-07-06', '15:30:00', 'confirmed');
-
 -- --------------------------------------------------------
 
 --
@@ -78,25 +67,17 @@ CREATE TABLE `doctors` (
   `doctor_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
   `password` varchar(255) NOT NULL,
   `specialization` varchar(255) NOT NULL,
+  `fee` int(255) NOT NULL,
+  `reg_num` varchar(255) NOT NULL,
   `status` enum('pending','approved') DEFAULT 'pending',
   `start` time NOT NULL,
   `end` time NOT NULL,
   `availability` varchar(255) NOT NULL,
   `profile_picture` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `doctors`
---
-
-INSERT INTO `doctors` (`doctor_id`, `name`, `email`, `password`, `specialization`, `status`, `start`, `end`, `availability`, `profile_picture`) VALUES
-(5, 'Dr. Baharam', 'baharam@gmail.com', '123', 'Medicine', 'approved', '15:00:00', '17:00:00', 'Tuesday, Thursday, Friday, Sunday', NULL),
-(6, 'Ami_doctor', 'abc@gmail.com', '123', 'Gynecology', 'approved', '07:54:00', '10:54:00', 'Monday, Tuesday, Wednesday, Thursday, Saturday, Sunday', ''),
-(9, 'Dr. Protik', 'protik@gmail.com', '1234', 'Medicine', 'approved', '16:00:00', '18:00:00', 'Monday, Wednesday, Friday', NULL),
-(11, 'shahariar', 'sh@gmail.com', '123', 'Surgery', 'approved', '10:00:00', '16:00:00', 'Monday, Wednesday, Friday, Sunday', NULL),
-(12, 'Dr. Farhan', 'farhan123@gmail.com', '123', 'Surgery', 'approved', '17:00:00', '19:00:00', 'Monday, Tuesday, Wednesday, Thursday, Saturday, Sunday', NULL);
 
 -- --------------------------------------------------------
 
@@ -108,17 +89,10 @@ CREATE TABLE `patients` (
   `patient_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `age` int(255) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `patients`
---
-
-INSERT INTO `patients` (`patient_id`, `name`, `email`, `password`) VALUES
-(1, 'Farhan', 'farhan@gmail.com', '123'),
-(2, 'Shohag', 'shohag@gmail.com', '123'),
-(3, 'Masud', 'abc@gmail.com', '123');
 
 --
 -- Indexes for dumped tables
@@ -143,14 +117,17 @@ ALTER TABLE `appointments`
 --
 ALTER TABLE `doctors`
   ADD PRIMARY KEY (`doctor_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `phone` (`phone`),
+  ADD UNIQUE KEY `reg_num` (`reg_num`);
 
 --
 -- Indexes for table `patients`
 --
 ALTER TABLE `patients`
   ADD PRIMARY KEY (`patient_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `phone` (`phone`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -160,25 +137,25 @@ ALTER TABLE `patients`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `doctors`
 --
 ALTER TABLE `doctors`
-  MODIFY `doctor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `doctor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `patients`
 --
 ALTER TABLE `patients`
-  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `patient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables

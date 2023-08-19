@@ -129,12 +129,55 @@ mysqli_close($conn);
             width: 100%;
             text-align: center;
         }
+
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Ensure the table header cells don't wrap */
+        table th {
+            white-space: wrap;
+        }
+
+        /* Ensure the table cells don't wrap */
+        table td {
+            white-space: wrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-decoration: wrap;
+            max-width: 100%;
+        }
+
+
+
+        /* Responsive Styles */
+        @media (max-width: 640px) {
+
+            /* Sidebar */
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+            }
+
+            table td {
+                white-space: normal;
+                overflow: auto;
+                text-overflow: unset;
+            }
+
+            /* Main Content */
+            .main-content {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-gray-100">
     <!-- Sidebar -->
-    <aside class="bg-gray-800 text-white h-screen w-64 fixed">
+    <aside class="bg-gray-800 text-white h-screen w-64 fixed sidebar">
         <div class="p-6">
             <a href="admin.php" class="text-2xl font-bold mb-4">Admin Panel</a>
             <ul class="space-y-2 mt-4 ">
@@ -165,7 +208,7 @@ mysqli_close($conn);
     </aside>
 
     <!-- Main Content -->
-    <main class="ml-64 p-6">
+    <main class="ml-64 p-6 main-content">
         <!-- <h1 class="text-2xl font-bold mb-4" id="dashboard">Dashboard</h1> -->
 
         <!-- Admin's Information -->
@@ -185,7 +228,7 @@ mysqli_close($conn);
             <table class="min-w-full bg-white border border-gray-300 text-center">
                 <thead>
                     <tr>
-                    <th class="py-2 px-4 border-b">Admin ID</th>
+                        <th class="py-2 px-4 border-b">Admin ID</th>
                         <th class="py-2 px-4 border-b">Name</th>
                         <th class="py-2 px-4 border-b">Email</th>
                         <th class="py-2 px-4 border-b">Role</th>
@@ -208,40 +251,42 @@ mysqli_close($conn);
         <!-- Doctors Table -->
         <div class="bg-white shadow-md rounded p-4 mt-4" id="doctors-list">
             <h2 class="text-xl font-bold mb-4">Doctors List</h2>
-            <table class="min-w-full bg-white border border-gray-300">
-                <thead>
-                    <tr>
-                        <th class="px-4 py-2 border-b">Name</th>
-                        <th class="px-4 py-2 border-b">Specialization</th>
-                        <th class="px-4 py-2 border-b">Email</th>
-                        <th class="px-4 py-2 border-b">Contact</th>
-                        <th class="px-4 py-2 border-b">Availability</th>
-                        <th class="px-4 py-2 border-b">Working Hours</th>
-                        <th class="px-4 py-2 border-b">Status<p class="text-sm">(pending/approved)</p>
-                        </th>
-                        <th class="px-4 py-2 border-b">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($doctors as $doctor) : ?>
+            <div class="table-container overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-300">
+                    <thead>
                         <tr>
-                            <td class="px-4 py-2 border-b text-center doctor-id" style="display:none;"><?php echo $doctor['doctor_id']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['name']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['specialization']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['email']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['phone']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['availability']; ?></td>
-                            <td class="px-4 py-2 border-b text-center"><?php echo $doctor['start'] . '-' . $doctor['end']; ?></td>
-                            <td class="px-4 py-2 border-b text-center status editable"><?php echo $doctor['status']; ?></td>
-                            <td class="px-4 py-2 border-b text-center">
-                                <button onclick="toggleStatusEdit(this)" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded">
-                                    Edit
-                                </button>
-                            </td>
+                            <th class="px-4 py-2 border-b">Name</th>
+                            <th class="px-4 py-2 border-b">Specialization</th>
+                            <th class="px-4 py-2 border-b">Email</th>
+                            <th class="px-4 py-2 border-b">Contact</th>
+                            <th class="px-4 py-2 border-b">Availability</th>
+                            <th class="px-4 py-2 border-b">Working Hours</th>
+                            <th class="px-4 py-2 border-b">Status<p class="text-sm">(pending/approved)</p>
+                            </th>
+                            <th class="px-4 py-2 border-b">Actions</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($doctors as $doctor) : ?>
+                            <tr>
+                                <td class="px-4 py-2 border-b text-center doctor-id" style="display:none;"><?php echo $doctor['doctor_id']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['name']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['specialization']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['email']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['phone']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['availability']; ?></td>
+                                <td class="px-4 py-2 border-b text-center"><?php echo $doctor['start'] . '-' . $doctor['end']; ?></td>
+                                <td class="px-4 py-2 border-b text-center status editable"><?php echo $doctor['status']; ?></td>
+                                <td class="px-4 py-2 border-b text-center">
+                                    <button onclick="toggleStatusEdit(this)" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded">
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Patients Table -->
@@ -264,7 +309,7 @@ mysqli_close($conn);
                             <td class="py-2 px-4 border-b"><?php echo $patient['name']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['email']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['phone']; ?></td>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['age']; ?></td>                                
+                            <td class="py-2 px-4 border-b"><?php echo $patient['age']; ?></td>
                             </td>
                         </tr>
                     <?php endforeach; ?>

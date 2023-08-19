@@ -51,6 +51,35 @@ $result = mysqli_query($conn, $query);
 // Fetch the appointments as an associative array
 $appointments = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
+// Check if the request is a POST request
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Get the appointment ID and new status from the POST data
+    $appointmentId = $_POST["appointment_id"];
+    $newStatus = $_POST["new_status"];
+
+    // Connect to the database (replace DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME with your actual database credentials)
+    $conn = mysqli_connect("localhost", "root", "", "doctor_appointment_system");
+
+    // Check connection
+    if (mysqli_connect_errno()) {
+        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        exit;
+    }
+
+    // Prepare and execute the SQL query to update the appointment status
+    $updateQuery = "UPDATE appointments SET status = '$newStatus' WHERE appointment_id = $appointmentId";
+    $updateResult = mysqli_query($conn, $updateQuery);
+
+    if ($updateResult) {
+        // Status updated successfully
+        // header("Location: doctor_dashboard.php");
+        echo "Success";
+    } else {
+        // Failed to update status
+        echo "Error";
+    }
+}
+
 // Close the database connection
 mysqli_close($conn);
 ?>
@@ -114,6 +143,7 @@ mysqli_close($conn);
                     <th class="w-1/6 px-4 py-2 border border-gray-400">Date</th>
                     <th class="w-1/6 px-4 py-2 border border-gray-400">Time</th>
                     <th class="w-1/6 px-4 py-2 border border-gray-400">Status</th>
+                    <th class="w-1/6 px-4 py-2 border border-gray-400">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -125,11 +155,49 @@ mysqli_close($conn);
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['appointment_date']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['appointment_time']; ?></td>
                         <td class="px-4 py-2 border-b text-center"><?php echo $appointment['status']; ?></td>
+                        <td class="px-4 py-2 border-b text-center">
+                            <?php if ($appointment['status'] == 'confirmed') : ?>
+                                <button onclick="changeStatus(<?php echo $appointment['appointment_id']; ?>, 'completed')" class="bg-green-300 text-black px-3  rounded-md hover:bg-green-200">Completed</button>
+                                <button onclick="changeStatus(<?php echo $appointment['appointment_id']; ?>, 'absent')" class="mt-1 bg-red-500 text-white px-3 rounded-md hover:bg-red-600">Absent</button>
+                            <?php elseif ($appointment['status'] == 'completed') : ?>
+                                <span class="text-green-500">Completed</span>
+                            <?php elseif ($appointment['status'] == 'absent') : ?>
+                                <span class="text-red-500">Absent</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
+    <script>
+        function changeStatus(appointmentId, newStatus) {
+            // Send an AJAX request to update the status using process.php
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'doctor_dashboard.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        // Status updated successfully
+                        const statusCell = document.querySelector(`#status-${appointmentId}`);
+                        statusCell.textContent = newStatus;
+                        alert('Status updated successfully.');
+
+                        // Reload the page to reflect the updated status
+                        
+                    } else {
+                        // Failed to update status
+                        alert('Failed to update status.');
+                    }
+                }
+            };
+            location.reload();
+
+            const data = `appointment_id=${appointmentId}&new_status=${newStatus}`;
+            xhr.send(data);
+        }
+    </script>
 </body>
 
 </html>

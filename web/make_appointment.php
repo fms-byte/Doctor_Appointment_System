@@ -14,6 +14,7 @@ if (isset($_POST["doctor_id"])) {
     // Example code to insert the appointment into the database
     $patientId = $_SESSION["patient_id"];
     $appointmentDate = $_POST["appointment_date"]; // Get the selected appointment date
+    $appointmentTime = $_POST["appointment_time"]; // Get the selected appointment time
 
     // Connect to the database (replace DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME with your actual database credentials)
     $conn = mysqli_connect("localhost", "root", "", "doctor_appointment_system");
@@ -23,6 +24,10 @@ if (isset($_POST["doctor_id"])) {
         echo "Failed to connect to MySQL: " . mysqli_connect_error();
         exit;
     }
+
+    // Check if the selected appointment date and time is already booked
+    $queryConflicts = "SELECT * FROM appointments WHERE doctor_id = $doctorId AND appointment_date = '$appointmentDate' AND appointment_time = '$appointmentTime'";
+    $resultConflicts = mysqli_query($conn, $queryConflicts);
 
     // Prepare the SQL query to retrieve the doctor's working hours
     $doctorQuery = "SELECT start, end FROM doctors WHERE doctor_id = $doctorId";
@@ -57,34 +62,42 @@ if (isset($_POST["doctor_id"])) {
                 $latestAppointmentResult = mysqli_query($conn, $latestAppointmentQuery);
                 $latestAppointment = mysqli_fetch_assoc($latestAppointmentResult);
 
-                if ($latestAppointment && isset($latestAppointment['appointment_time'])) {
-                    $lastAppointmentTime = $latestAppointment['appointment_time'];
-                    $nextAppointmentTime = date('H:i:s', strtotime($lastAppointmentTime . ' + 30 minutes'));
+                // if ($latestAppointment && isset($latestAppointment['appointment_time'])) {
+                //     $lastAppointmentTime = $latestAppointment['appointment_time'];
+                //     $nextAppointmentTime = date('H:i:s', strtotime($lastAppointmentTime . ' + 30 minutes'));
+                // } else {
+                //     // If there are no previous appointments on the selected date, set the appointment time to the start time
+                //     $nextAppointmentTime = $startTime;
+                // }
+
+                if (mysqli_num_rows($resultConflicts) > 0) {
+                    echo '<script>alert("The selected appointment date and time is already booked. Please choose a different time.."); window.location.href = "make_appointment.php?doctor_id=' . $doctorId . '";</script>';
+                    exit();
                 } else {
-                    // If there are no previous appointments on the selected date, set the appointment time to the start time
-                    $nextAppointmentTime = $startTime;
-                }
+                    // Check if the next appointment time is within the working hours
+                    if ($appointmentTime <= $endTime) {
+                        // Prepare the SQL query to insert the appointment
+                        // $insertQuery = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time) VALUES ($patientId, $doctorId, '$appointmentDate', '$nextAppointmentTime')";
 
-                // Check if the next appointment time is within the working hours
-                if ($nextAppointmentTime <= $endTime) {
-                    // Prepare the SQL query to insert the appointment
-                    $insertQuery = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time) VALUES ($patientId, $doctorId, '$appointmentDate', '$nextAppointmentTime')";
+                        // Execute the query
+                        // $result = mysqli_query($conn, $insertQuery);
 
-                    // Execute the query
-                    $result = mysqli_query($conn, $insertQuery);
+                        $insertQuery = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time) VALUES ($patientId, $doctorId, '$appointmentDate', '$appointmentTime')";
+                        $insertResult = mysqli_query($conn, $insertQuery);
 
-                    // Check if the appointment was successfully inserted
-                    if ($result) {
-                        // Redirect to the patient_dashboard.php with a success message
-                        header("Location: patient_dashboard.php?success=1");
-                        exit();
+                        // Check if the appointment was successfully inserted
+                        if ($insertResult) {
+                            // Redirect to the patient_dashboard.php with a success message
+                            header("Location: patient_dashboard.php?success=1");
+                            exit();
+                        } else {
+                            echo '<script>alert("Failed to schedule the appointment. Please try again!"); window.location.href = "make_appointment.php?doctor_id=' . $doctorId . '";</script>';
+                            exit();
+                        }
                     } else {
-                        echo '<script>alert("Failed to insert the appointment."); window.location.href = "patient_dashboard.php";</script>';
+                        echo '<script>alert("Doctor is not available in this time. Please check the time again!"); window.location.href = "make_appointment.php?doctor_id=' . $doctorId . '";</script>';
                         exit();
                     }
-                } else {
-                    echo '<script>alert("No available slots for the selected date."); window.location.href = "patient_dashboard.php";</script>';
-                    exit();
                 }
             }
         } else {
@@ -92,7 +105,7 @@ if (isset($_POST["doctor_id"])) {
             exit();
         }
     }
-    echo '<script>alert("No available slots for the selected date."); window.location.href = "patient_dashboard.php";</script>';
+    echo '<script>alert("Facing Some error fetching the available days of the doctor. Please try again later!"); window.location.href = "patient_dashboard.php";</script>';
     exit();
 }
 

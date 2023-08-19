@@ -84,7 +84,7 @@ mysqli_close($conn);
     <div class="container mx-auto py-8 mb-8 mt-20">
         <div class="mx-auto bg-white bg-opacity-90 p-4 border border-gray-300 rounded shadow-md">
             <h2 class="text-2xl font-bold mb-2">Patient Information</h2>
-            <div class="w-full mx-auto bg-blue-200 flex justify-center p-4 mb-4 text-xl">
+            <div class="w-full mx-auto bg-blue-200 flex justify-center p-4 mb-4 text-l">
                 <div class="w-1/4 text-center flex items-center justify-center"><strong>Name:</strong>&nbsp;<?php echo $patient['name']; ?></div>
                 <div class="w-1/4 flex items-center justify-center"><strong>Email:</strong>&nbsp;<?php echo $patient['email']; ?></div>
                 <div class="w-1/4 flex items-center justify-center"><strong>Contact Number:</strong>&nbsp;<?php echo $patient['phone']; ?></div>

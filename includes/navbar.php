@@ -43,7 +43,7 @@
     <nav class="flex justify-between">
         <ul>
             <li>
-                <a href="index.php" class="font-bold text-2xl"><span style="color: #DF2E38">Medi</span>-<span style="color: #FFD6A5">lab</span></a>
+                <a href="index.php" class="font-bold text-2xl"><span style="color: #DF2E38">Medi</span>-<span style="color: #79155B">lab</span></a>
             </li>
         </ul>
         <ul class="flex my-auto">

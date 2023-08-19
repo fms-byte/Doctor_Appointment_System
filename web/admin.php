@@ -185,26 +185,19 @@ mysqli_close($conn);
             <table class="min-w-full bg-white border border-gray-300 text-center">
                 <thead>
                     <tr>
+                    <th class="py-2 px-4 border-b">Admin ID</th>
                         <th class="py-2 px-4 border-b">Name</th>
                         <th class="py-2 px-4 border-b">Email</th>
                         <th class="py-2 px-4 border-b">Role</th>
-                        <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($admins as $admin) : ?>
                         <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $admin['admin_id']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $admin['name']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $admin['email']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $admin['role']; ?></td>
-                            <td class="py-2 px-4 border-b">
-                                <?php if ($admin['role'] === 'admin') : ?>
-                                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this admin?');">
-                                        <input type="hidden" name="delete_admin_id" value="<?php echo $admin['admin_id']; ?>">
-                                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
-                                    </form>
-                                <?php endif; ?>
-                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -232,6 +225,7 @@ mysqli_close($conn);
                 <tbody>
                     <?php foreach ($doctors as $doctor) : ?>
                         <tr>
+                            <td class="px-4 py-2 border-b text-center doctor-id" style="display:none;"><?php echo $doctor['doctor_id']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['name']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['specialization']; ?></td>
                             <td class="px-4 py-2 border-b text-center"><?php echo $doctor['email']; ?></td>
@@ -243,10 +237,6 @@ mysqli_close($conn);
                                 <button onclick="toggleStatusEdit(this)" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-1 px-4 rounded">
                                     Edit
                                 </button>
-                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this doctor?');">
-                                    <input type="hidden" name="delete_doctor_id" value="<?php echo $doctor['doctor_id']; ?>">
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 mt-1 rounded">Delete</button>
-                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -260,25 +250,21 @@ mysqli_close($conn);
             <table class="min-w-full bg-white border border-gray-300 text-center">
                 <thead>
                     <tr>
+                        <th class="py-2 px-4 border-b">Patient ID</th>
                         <th class="py-2 px-4 border-b">Name</th>
                         <th class="py-2 px-4 border-b">Email</th>
                         <th class="py-2 px-4 border-b">Contact</th>
                         <th class="py-2 px-4 border-b">Age</th>
-                        <th class="py-2 px-4 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($patients as $patient) : ?>
                         <tr>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['patient_id']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['name']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['email']; ?></td>
                             <td class="py-2 px-4 border-b"><?php echo $patient['phone']; ?></td>
-                            <td class="py-2 px-4 border-b"><?php echo $patient['age']; ?></td>
-                            <td class="py-2 px-4 border-b">
-                                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this patient?');">
-                                    <input type="hidden" name="delete_patient_id" value="<?php echo $patient['patient_id']; ?>">
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">Delete</button>
-                                </form>
+                            <td class="py-2 px-4 border-b"><?php echo $patient['age']; ?></td>                                
                             </td>
                         </tr>
                     <?php endforeach; ?>

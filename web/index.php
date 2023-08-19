@@ -36,7 +36,7 @@ session_start();
 
     <main class="container mx-auto px-4 py-8">
     <div class="text-center pt-28 flex justify-between items-center">
-        <div class="w-1/2">
+        <div class="w-1/2 bg-blue-100 bg-opacity-75 border-lg rounded px-4 py-16 mt-8 mr-4 h-full">
             <h2 class="text-3xl font-bold mb-4">Welcome to Medi-Lab.</h2>
             <p class="text-gray-600">Medi-Lab is a state-of-the-art healthcare platform that connects patients with doctors for convenient and efficient medical appointments.</p>
             </br>
@@ -54,7 +54,7 @@ session_start();
 
             <div class="items-center bg-blue-100 bg-opacity-75 border-lg rounded p-4 ml-2 h-full">
                 <h3 class="text-xl font-semibold mb-2 p-2">Patients</h3>
-                <p class="text-gray-800 mb-4">Are you a patient? Log in or register as a Patient to make appointments.</p>
+                <p class="text-gray-800 mb-4">Are you a patient? Log in or register as a Patient to book appointments.</p>
                 <a href="register_patient.php" class="inline-block mx-auto w-48 bg-gray-800 text-white px-6 py-2 rounded-lg text-medium hover:bg-gray-600">Register as Patient</a>
                 <p class="text-gray-500 mx-auto mt-2">Already registered? Log in..</p>
                 <a href="patient_login.php" class="mt-4 inline-block mx-auto w-48 bg-gray-800 text-white px-6 py-2 rounded-lg text-medium hover:bg-gray-600">Patient Login</a>
